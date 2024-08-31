@@ -1,0 +1,31 @@
+services:
+  db:
+    image: mongo:latest
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+  api:
+    build: ./API
+    container_name: nawy-api
+    ports:
+      - "8080:8080"
+    environment:
+      MONGO_URI: mongodb://db:27017/nawy
+    depends_on:
+      - db
+
+  ui:
+    build: ./UI/nawy
+    container_name: nawy-ui
+    ports:
+      - "3000:3000"
+    environment:
+      API_URL: http://api:8080
+    depends_on:
+      - api
+
+volumes:
+  mongo-data:
